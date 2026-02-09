@@ -1,0 +1,248 @@
+:root {
+  color-scheme: light;
+  --bg: #f7f4ef;
+  --bg-accent: #f1ece3;
+  --ink: #1d1b16;
+  --muted: #6e655a;
+  --accent: #e4572e;
+  --accent-dark: #b63e1d;
+  --mint: #2a9d8f;
+  --card: #ffffff;
+  --border: rgba(29, 27, 22, 0.08);
+  --shadow: 0 24px 60px -40px rgba(29, 27, 22, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", "IBM Plex Sans", system-ui, sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at top, #fff7e7 0%, var(--bg) 45%, var(--bg-accent) 100%);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+h1 {
+  font-size: 44px;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+.status-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+
+.status-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #c5c1b9;
+  box-shadow: inset 0 0 0 3px rgba(29, 27, 22, 0.1);
+}
+
+.status-indicator.ok {
+  background: var(--mint);
+}
+
+.status-indicator.bad {
+  background: var(--accent);
+}
+
+.status-label {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status-value {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+form {
+  display: grid;
+  gap: 8px;
+}
+
+label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+input {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 12px 24px -16px rgba(228, 87, 46, 0.6);
+}
+
+.primary:hover {
+  background: var(--accent-dark);
+}
+
+.ghost-button {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+
+.inline-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.response {
+  background: #fff;
+  color: var(--ink);
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  min-height: 72px;
+  border: 1px solid var(--border);
+}
+
+.response.error {
+  border: 1px solid rgba(228, 87, 46, 0.45);
+  background: #fff2ec;
+}
+
+.response-title {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.response-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.response-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.response-item span {
+  color: var(--muted);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: #f9f7f3;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+}

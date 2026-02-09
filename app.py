@@ -1,25 +1,26 @@
 from dotenv import load_dotenv
-from flask import Flask, jsonify, make_response, Response, request
-from music_collection.models.stock_model import StockModel
-from music_collection.models.portfolio_model import PortfolioModel
-from music_collection.utils.sql_utils import check_database_connection, check_table_exists
-from typing import Any, Dict, Tuple
-from venv import logger
-from flask import Flask, jsonify, make_response, request
 
-import os
-import requests
-from dotenv import load_dotenv
-
-from music_collection.models.user_model import UserModel
-
-# Load environment variables from .env file
+# Load environment variables from .env file before other imports
 load_dotenv()
 
-app = Flask(__name__)
+import os
+from flask import Flask, Response, jsonify, make_response, request, send_from_directory
+
+from stock_models.models.portfolio_model import PortfolioModel
+from stock_models.models.stock_model import StockModel
+from stock_models.models.user_model import UserModel
+from stock_models.utils.sql_utils import check_database_connection, check_table_exists
+
+app = Flask(__name__, static_folder="frontend", static_url_path="/static")
 user_model = UserModel()
 stock_model = StockModel()
 portfolio_model = PortfolioModel()
+
+
+@app.route("/", methods=["GET"])
+def serve_frontend() -> Response:
+    return send_from_directory(app.static_folder, "index.html")
+
 @app.route('/api/create-account', methods=['POST'])
 def create_account():
     """
@@ -101,7 +102,7 @@ def update_password():
     Expected JSON payload:
     {
         "username": "string",
-        "old_password": "string",
+        "current_password": "string",
         "new_password": "string"
     }
     """
@@ -114,12 +115,12 @@ def update_password():
             return jsonify({"error": "No input data provided"}), 400
         
         username = data.get('username')
-        old_password = data.get('current_password')
+        old_password = data.get('current_password') or data.get('old_password')
         new_password = data.get('new_password')
         
         # Validate all required fields are present
         if not all([username, old_password, new_password]):
-            return jsonify({"error": f"{username, old_password, new_password}"}), 400
+            return jsonify({"error": "Username, current_password, and new_password are required"}), 400
         
         # Attempt to update password
         result = user_model.update_password(username, old_password, new_password)
@@ -326,4 +327,5 @@ def sell_stock() -> Response:
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=6000)
+    port = int(os.getenv("PORT", "8000"))
+    app.run(debug=True, host='0.0.0.0', port=port)

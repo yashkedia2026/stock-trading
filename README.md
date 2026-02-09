@@ -3,13 +3,33 @@
 A Flask-based REST API that enables users to view stock information and manage a simulated stock portfolio. The application integrates with Alpha Vantage for real-time market data.
 
 ## Running the Application
-Clone the repository:
+Set `ALPHA_VANTAGE_API_KEY` in your environment or `.env` file before starting. `.env.example` lists the required variables.
 
-Build and run with Docker Compose: docker build -t stock-app .
+Build and run with Docker:
 
-docker run -d -p 6000:6000 stock-app
+`docker build -t stock-app .`
 
-The API will be available at http://localhost:6000
+`docker run -d -p 8000:8000 --env-file .env stock-app`
+
+The API will be available at http://localhost:8000 and the UI at http://localhost:8000/
+
+## Deploy on Render (Option A: Python Web Service)
+1. Push this repo to GitHub and create a new **Web Service** in Render.
+2. Choose **Python 3** as the language.
+3. Set the **Build Command** to:
+   `pip install -r requirements.lock`
+4. Set the **Start Command** to:
+   `bash render_start.sh`
+   - This runs Gunicorn bound to `0.0.0.0:$PORT`, which is required by Render.
+5. Environment variables to add in Render:
+   - `ALPHA_VANTAGE_API_KEY` (required)
+   - `CREATE_DB=true` (creates the DB if it doesn’t exist)
+   - `RESET_DB=false` (optional safety; set `true` only if you want to wipe tables)
+   - `DB_PATH=/var/data/stocks.db` if you attach a persistent disk at `/var/data`
+
+Notes:
+- Render provides the `PORT` environment variable (default 10000). The app binds to this automatically via `render_start.sh`.
+- If you want SQLite data to persist, attach a **Persistent Disk** in Render and store the DB under `/var/data`.
 
 ## API Routes
 
@@ -50,7 +70,19 @@ The API will be available at http://localhost:6000
   curl http://localhost:6000/api/stock/AAPL
   ```
 
-### 3. Get Historical Stock Data
+### 3. Get Company Information
+- **Path:** `/api/stock/<symbol>/company`
+- **Request Type:** GET
+- **Purpose:** Retrieve company profile information for a stock
+- **Request Format:**
+  - Path Parameter: `symbol` (stock ticker e.g., AAPL)
+- **Response Format:** Alpha Vantage company overview payload
+- **Example:**
+  ```bash
+  curl http://localhost:6000/api/stock/AAPL/company
+  ```
+
+### 4. Get Historical Stock Data
 - **Path:** `/api/stock/<symbol>/history`
 - **Request Type:** GET
 - **Purpose:** Retrieve historical price data for a stock
@@ -59,9 +91,13 @@ The API will be available at http://localhost:6000
 - **Response Format:**
   ```json
   {
-    "dates": ["string"],
-    "prices": ["number"],
-    "volumes": ["number"]
+    "YYYY-MM-DD": {
+      "open": "number",
+      "high": "number",
+      "low": "number",
+      "close": "number",
+      "volume": "number"
+    }
   }
   ```
 - **Example:**
@@ -69,32 +105,44 @@ The API will be available at http://localhost:6000
   curl http://localhost:6000/api/stock/AAPL/history
   ```
 
-### 4. View Portfolio
+### 5. View Portfolio
 - **Path:** `/api/portfolio`
 - **Request Type:** GET
 - **Purpose:** Get current portfolio holdings and values
 - **Request Format:** None
 - **Response Format:**
   ```json
-  {
-    "holdings": [
-      {
-        "symbol": "string",
-        "shares": "integer",
-        "current_value": "number",
-        "purchase_price": "number",
-        "gain_loss": "number"
-      }
-    ],
-    "total_value": "number"
-  }
+  [
+    {
+      "symbol": "string",
+      "shares": "integer",
+      "current_price": "number",
+      "current_value": "number",
+      "avg_purchase_price": "number",
+      "total_gain_loss": "number"
+    }
+  ]
   ```
 - **Example:**
   ```bash
   curl http://localhost:6000/api/portfolio
   ```
 
-### 5. Buy Stock
+### 6. Portfolio Value
+- **Path:** `/api/portfolio/value`
+- **Request Type:** GET
+- **Purpose:** Get total portfolio value and gains/losses
+- **Response Format:**
+  ```json
+  {
+    "total_value": "number",
+    "total_cost": "number",
+    "total_gain_loss": "number",
+    "total_gain_loss_percent": "number"
+  }
+  ```
+
+### 7. Buy Stock
 - **Path:** `/api/portfolio/buy`
 - **Request Type:** POST
 - **Purpose:** Purchase shares of a stock
@@ -121,7 +169,7 @@ The API will be available at http://localhost:6000
     -d '{"symbol": "AAPL", "shares": 10}'
   ```
 
-### 6. Sell Stock
+### 8. Sell Stock
 - **Path:** `/api/portfolio/sell`
 - **Request Type:** POST
 - **Purpose:** Sell shares of a stock from portfolio
@@ -136,9 +184,9 @@ The API will be available at http://localhost:6000
   ```json
   {
     "symbol": "string",
-    "shares": "integer",
+    "shares_sold": "integer",
     "price_per_share": "number",
-    "total_proceeds": "number"
+    "total_value": "number"
   }
   ```
 - **Example:**
@@ -146,4 +194,38 @@ The API will be available at http://localhost:6000
   curl -X POST http://localhost:6000/api/portfolio/sell \
     -H 'Content-Type: application/json' \
     -d '{"symbol": "AAPL", "shares": 5}'
+  ```
+
+### 9. Create Account
+- **Path:** `/api/create-account`
+- **Request Type:** POST
+- **Request Format:**
+  ```json
+  {
+    "username": "string",
+    "password": "string"
+  }
+  ```
+
+### 10. Login
+- **Path:** `/api/login`
+- **Request Type:** POST
+- **Request Format:**
+  ```json
+  {
+    "username": "string",
+    "password": "string"
+  }
+  ```
+
+### 11. Update Password
+- **Path:** `/api/update-password`
+- **Request Type:** POST
+- **Request Format:**
+  ```json
+  {
+    "username": "string",
+    "current_password": "string",
+    "new_password": "string"
+  }
   ```

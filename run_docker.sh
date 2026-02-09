@@ -3,8 +3,8 @@
 # Variables
 IMAGE_NAME="stock-app"
 CONTAINER_TAG="0.0.1"
-HOST_PORT=6000
-CONTAINER_PORT=6000
+HOST_PORT=8000
+CONTAINER_PORT=8000
 DB_VOLUME_PATH="./db"   # Adjust this to the desired host path for the database persistence
 BUILD=true  # Set this to true if you want to build the image
 

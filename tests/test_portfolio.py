@@ -1,8 +1,7 @@
 import pytest
 import sqlite3
-from datetime import datetime
-from unittest.mock import Mock, patch
-from music_collection.models.portfolio_model import PortfolioModel
+from unittest.mock import patch
+from stock_models.models.portfolio_model import PortfolioModel
 
 @pytest.fixture
 def portfolio_model():
@@ -23,9 +22,7 @@ def portfolio_model():
     conn.commit()
     
     # Create model and set connection
-    model = PortfolioModel()
-    model.db_path = ":memory:"
-    model._conn = conn  # Store connection on model instance
+    model = PortfolioModel(conn=conn, db_path=":memory:")
     
     yield model
     

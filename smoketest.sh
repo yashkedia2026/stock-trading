@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the base URL for the Flask API
-BASE_URL="http://localhost:6000/api"
+BASE_URL="${BASE_URL:-http://localhost:${PORT:-8000}/api}"
 
 # Flag to control whether to echo JSON output
 ECHO_JSON=false
@@ -172,22 +172,33 @@ check_health
 
 
 # User tests
-create_account "testuser" "testpassword"
-login "testuser" "testpassword"
-update_password "testuser" "testpassword" "newpassword"
+USER_SUFFIX=$(date +%s)
+TEST_USER="testuser_${USER_SUFFIX}"
+TEST_PASS="testpassword"
+TEST_NEW_PASS="newpassword"
+
+create_account "$TEST_USER" "$TEST_PASS"
+login "$TEST_USER" "$TEST_PASS"
+update_password "$TEST_USER" "$TEST_PASS" "$TEST_NEW_PASS"
 
 # Test stock information endpoints
 get_stock_info "AAPL"
+sleep 15
 get_stock_info "GOOGL"
+sleep 15
 get_stock_history "AAPL"
+sleep 15
 
 # Test portfolio management
 get_portfolio
 buy_stock "AAPL" 10
+sleep 15
 buy_stock "GOOGL" 5
+sleep 15
 get_portfolio
 get_portfolio_value
 sell_stock "AAPL" 5
+sleep 15
 get_portfolio
 get_portfolio_value
 

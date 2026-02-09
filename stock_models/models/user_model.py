@@ -1,12 +1,13 @@
-import sqlite3
 import hashlib
 import os
-from typing import Dict, Optional
-from music_collection.utils.sql_utils import get_db_connection
+import sqlite3
+from typing import Dict
+
+from stock_models.utils.sql_utils import get_db_connection
 
 class UserModel:
     def __init__(self):
-        self.db_path = "users.db"
+        self.db_path = os.getenv("DB_PATH", "./db/stocks.db")
 
     def hash_password(self, password: str, salt: bytes = None) -> Dict[str, bytes]:
         """
@@ -58,7 +59,7 @@ class UserModel:
         hashed_data = self.hash_password(password)
         
         try:
-            with get_db_connection() as conn:
+            with get_db_connection(self.db_path) as conn:
                 cursor = conn.cursor()
                 
                 # Insert new user
@@ -98,7 +99,7 @@ class UserModel:
             raise ValueError("Username and password are required")
         
         try:
-            with get_db_connection() as conn:
+            with get_db_connection(self.db_path) as conn:
                 cursor = conn.cursor()
                 
                 # Retrieve user data
@@ -143,7 +144,7 @@ class UserModel:
             raise ValueError("New password must be at least 8 characters long")
         
         try:
-            with get_db_connection() as conn:
+            with get_db_connection(self.db_path) as conn:
                 cursor = conn.cursor()
                 
                 # First, verify the old password
