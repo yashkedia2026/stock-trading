@@ -27,7 +27,8 @@ The API will be available at http://localhost:8000 and the UI at http://localhos
    - `ALPHA_VANTAGE_API_KEY` (required)
    - `CREATE_DB=true` (creates the DB if it doesn’t exist)
    - `RESET_DB=false` (optional safety; set `true` only if you want to wipe tables)
-   - `DB_PATH=/var/data/stocks.db` if you attach a persistent disk at `/var/data`
+   - `DB_PATH=/tmp/stocks.db` for free tier (no disks)
+   - `DB_PATH=/var/data/stocks.db` if you upgrade and attach a persistent disk at `/var/data`
 
 Notes:
 - Render provides the `PORT` environment variable (default 10000). The app binds to this automatically via `render_start.sh`.
