@@ -5,6 +5,8 @@ A Flask-based REST API that enables users to view stock information and manage a
 ## Running the Application
 Set `ALPHA_VANTAGE_API_KEY` in your environment or `.env` file before starting. `.env.example` lists the required variables.
 
+Requires Python 3.10+ (Gunicorn 25+).
+
 Build and run with Docker:
 
 `docker build -t stock-app .`
