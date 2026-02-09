@@ -2,6 +2,8 @@
 
 A Flask-based REST API that enables users to view stock information and manage a simulated stock portfolio. The application integrates with Alpha Vantage for real-time market data.
 
+Live demo: `https://stock-trading-yhw4.onrender.com/`
+
 ## Running the Application
 Set `ALPHA_VANTAGE_API_KEY` in your environment or `.env` file before starting. `.env.example` lists the required variables.
 
